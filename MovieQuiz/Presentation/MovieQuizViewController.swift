@@ -142,11 +142,11 @@ final class MovieQuizViewController: UIViewController {
             self.showCurrentQuestion()
         }
         alert.addAction(action)
-        self.present(alert, animated: true, completion: nil)
+        present(alert, animated: true, completion: nil)
     }
 }
 
-struct QuizQuestion {
+private struct QuizQuestion {
   // строка с названием фильма,
   // совпадает с названием картинки афиши фильма в Assets
   let image: String
@@ -157,7 +157,7 @@ struct QuizQuestion {
 }
 
 // модель для состояния "Вопрос показан"
-struct QuizStepModel {
+private struct QuizStepModel {
   // картинка с афишей фильма с типом UIImage
   let image: UIImage
   // вопрос о рейтинге квиза
@@ -167,7 +167,7 @@ struct QuizStepModel {
 }
 
 // модель для состояния "Результат квиза"
-struct QuizResultsModel {
+private struct QuizResultsModel {
   // строка с заголовком алерта
   let title: String
   // строка с текстом о количестве набранных очков
