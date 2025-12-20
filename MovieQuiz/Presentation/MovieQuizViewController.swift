@@ -1,6 +1,15 @@
 import UIKit
 
 final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
+
+    // MARK: - IB Outlets
+    @IBOutlet private weak var moviePosterImageView: UIImageView!
+    @IBOutlet private weak var questionLabel: UILabel!
+    @IBOutlet private weak var counterLabel: UILabel!
+    @IBOutlet private weak var yesButton: UIButton!
+    @IBOutlet private weak var noButton: UIButton!
+
+    // MARK: - Private Properties
     private var currentQuestionNumber = 0
     private var correctAnswers = 0
     
@@ -10,12 +19,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private var alertPresenter = AlertPresenter()
     private var statisticService: StatisticServiceProtocol?
 
-    @IBOutlet private weak var moviePosterImageView: UIImageView!
-    @IBOutlet private weak var questionLabel: UILabel!
-    @IBOutlet private weak var counterLabel: UILabel!
-    @IBOutlet private weak var yesButton: UIButton!
-    @IBOutlet private weak var noButton: UIButton!
-    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,7 +29,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
 
     // MARK: - QuestionFactoryDelegate
     func didReceiveNextQuestion(question: QuizQuestion?) {
-        guard let question = question else {
+        guard let question else {
             return
         }
         currentQuestionNumber += 1
@@ -36,21 +39,22 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         }
     }
 
-    // MARK: - Actions
+    // MARK: - IB Actions
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
-        guard let currentQuestion = currentQuestion else {
+        guard let currentQuestion else {
             return
         }
         showAnswerResult(isCorrect: currentQuestion.correctAnswer)
     }
     
     @IBAction private func noButtonClicked(_ sender: UIButton) {
-        guard let currentQuestion = currentQuestion else {
+        guard let currentQuestion else {
             return
         }
         showAnswerResult(isCorrect: !currentQuestion.correctAnswer)
     }
     
+    // MARK: - Private Methods
     // метод конвертации, который принимает моковый вопрос и возвращает модель для экрана вопроса
     private func convert(quizQuestion: QuizQuestion) -> QuizStepModel {
         let questionNumberText = "\(currentQuestionNumber)/10"
@@ -111,11 +115,11 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     }
     
     private func showCurrentQuestion() {
-        guard let requestedQuestion = currentQuestion else {
+        guard let currentQuestion else {
             return
         }
         makeButtons(enabled: true)
-        let quizStepModel = convert(quizQuestion: requestedQuestion)
+        let quizStepModel = convert(quizQuestion: currentQuestion)
         show(quizStep: quizStepModel)
     }
     
@@ -141,7 +145,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             message: alertMessage,
             buttonText: quizResult.buttonText,
             completion: { [weak self] in
-                guard let self = self else {
+                guard let self else {
                     return
                 }
                 self.playOneMore()

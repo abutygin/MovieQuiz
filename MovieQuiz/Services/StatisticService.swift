@@ -7,7 +7,7 @@
 
 import Foundation
 
-class StatisticService: StatisticServiceProtocol {
+final class StatisticService: StatisticServiceProtocol {
     var totalAccuracy: Double {
         if totalQuestionsAsked == 0 {
             return 0.0
