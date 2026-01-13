@@ -8,9 +8,7 @@
 import Foundation
 
 struct QuizQuestion {
-    let image: Data
-    // строка с вопросом о рейтинге фильма
+    let imageData: Data
     let text: String
-    // булевое значение (true, false), правильный ответ на вопрос
     let correctAnswer: Bool
 }

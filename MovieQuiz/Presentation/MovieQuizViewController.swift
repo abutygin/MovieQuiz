@@ -52,7 +52,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         case MoviesLoader.MoviesLoaderError.apiError(let errorMessage):
             showNetworkError(message: "Ошибка загрузки фильмов: '\(errorMessage)'")
         default:
-            showNetworkError(message: error.localizedDescription) // возьмём в качестве сообщения описание ошибки
+            showNetworkError(message: error.localizedDescription)
         }
     }
 
@@ -76,7 +76,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private func convert(quizQuestion: QuizQuestion) -> QuizStepModel {
         let questionNumberText = "\(currentQuestionNumber)/10"
         let quizModel = QuizStepModel(
-            image: UIImage(data: quizQuestion.image) ?? UIImage(),
+            image: UIImage(data: quizQuestion.imageData) ?? UIImage(),
             question: quizQuestion.text,
             questionNumber: questionNumberText)
         return quizModel
