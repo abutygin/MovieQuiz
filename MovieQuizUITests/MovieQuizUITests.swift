@@ -25,67 +25,60 @@ final class MovieQuizUITests: XCTestCase {
     }
 
     func testYesButton() {
-        sleep(3)
-        let firstPoster = app.images["Poster"]
-        let firstPosterData = firstPoster.screenshot().pngRepresentation
+        let quizScreen = QuizScreen()
+        quizScreen.waitForLoading()
+        let firstPosterData = quizScreen.getImageData()
 
-        app.buttons["Yes"].tap()
-        sleep(3)
-
-        let secondPoster = app.images["Poster"]
-        let secondPosterData = secondPoster.screenshot().pngRepresentation
+        quizScreen.tapYesButton()
+        quizScreen.waitForButtonIsHittable()
+        let secondPosterData = quizScreen.getImageData()
 
         XCTAssertNotEqual(firstPosterData, secondPosterData)
-        let indexLabel = app.staticTexts["Index"]
-        XCTAssertEqual(indexLabel.label, "2/10", "Проверка номера вопроса")
+        let indexText = quizScreen.getIndexText()
+        XCTAssertEqual(indexText, "2/10", "Проверка номера вопроса")
     }
 
     func testNoButton() {
-        sleep(3)
-        let firstPoster = app.images["Poster"]
-        let firstPosterData = firstPoster.screenshot().pngRepresentation
+        let quizScreen = QuizScreen()
+        quizScreen.waitForLoading()
+        let firstPosterData = quizScreen.getImageData()
 
-        app.buttons["No"].tap()
-        sleep(3)
-
-        let secondPoster = app.images["Poster"]
-        let secondPosterData = secondPoster.screenshot().pngRepresentation
+        quizScreen.tapNoButton()
+        quizScreen.waitForButtonIsHittable()
+        let secondPosterData = quizScreen.getImageData()
 
         XCTAssertNotEqual(firstPosterData, secondPosterData)
-        let indexLabel = app.staticTexts["Index"]
-        XCTAssertEqual(indexLabel.label, "2/10", "Проверка номера вопроса")
+        let indexText = quizScreen.getIndexText()
+        XCTAssertEqual(indexText, "2/10", "Проверка номера вопроса")
     }
 
     func testQuizResultAlert() {
-        sleep(3)
-
+        let quizScreen = QuizScreen()
+        quizScreen.waitForLoading()
         for _ in 0..<10 {
-            app.buttons["No"].tap()
-            sleep(2)
+            quizScreen.waitForButtonIsHittable()
+            quizScreen.tapNoButton()
+            quizScreen.waitForButtonIsNotHittable()
         }
-        let resultAlert = app.alerts.firstMatch
-        XCTAssertTrue(resultAlert.exists, "Должен появиться алерт результата квиза")
-        let alertTitleLabel = resultAlert.staticTexts.firstMatch
-        XCTAssertEqual("Этот раунд окончен!", alertTitleLabel.label, "Проверка заголовка алерта")
-        let alertButton = resultAlert.buttons.firstMatch
-        XCTAssertEqual("Сыграть ещё раз", alertButton.label, "Проверка текста кнопки алерта")
+        let alertScreen = AlertScreen()
+        alertScreen.waitForShowing()
+        XCTAssertEqual("Этот раунд окончен!", alertScreen.getTitle(), "Проверка заголовка алерта")
+        XCTAssertEqual("Сыграть ещё раз", alertScreen.getButtonText(), "Проверка текста кнопки алерта")
     }
 
     func testQuizResultAlertButton() {
-        sleep(3)
-
+        let quizScreen = QuizScreen()
+        quizScreen.waitForLoading()
         for _ in 0..<10 {
-            app.buttons["No"].tap()
-            sleep(2)
+            quizScreen.waitForButtonIsHittable()
+            quizScreen.tapNoButton()
+            quizScreen.waitForButtonIsNotHittable()
         }
-        let resultAlert = app.alerts.firstMatch
-        XCTAssertTrue(resultAlert.exists, "Должен появиться алерт результата квиза")
-
-        let alertButton = resultAlert.buttons.firstMatch
-        alertButton.tap()
-        sleep(1)
-        XCTAssertFalse(resultAlert.exists, "Должен скрыться алерт результата квиза")
-        let indexLabel = app.staticTexts["Index"]
-        XCTAssertEqual(indexLabel.label, "1/10", "Счетчик вопросов должен перейти в начальное состояние")
+        let alertScreen = AlertScreen()
+        alertScreen.waitForShowing()
+        alertScreen.tapButton()
+        quizScreen.waitForLoading()
+        XCTAssertFalse(alertScreen.isShowing(), "Должен скрыться алерт результата квиза")
+        XCTAssertEqual(quizScreen.getIndexText(), "1/10", "Счетчик вопросов должен перейти в начальное состояние")
     }
 }

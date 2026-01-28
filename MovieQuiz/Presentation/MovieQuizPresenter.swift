@@ -12,7 +12,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     private var currentQuestionIndex: Int = 0
     private var correctAnswers: Int = 0
     private var currentQuestion: QuizQuestion?
-    private let statisticService: StatisticServiceProtocol!
+    private let statisticService: StatisticServiceProtocol?
     private var questionFactory: QuestionFactoryProtocol?
     private weak var viewController: MovieQuizViewControllerProtocol?
 
@@ -41,7 +41,12 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     func restartGame() {
         currentQuestionIndex = 0
         correctAnswers = 0
+        questionFactory?.requestNextQuestion()
+    }
+
+    func reloadQuestions() {
         questionFactory?.loadData()
+        viewController?.showLoadingIndicator()
     }
 
     private func switchToNextQuestion() {
@@ -57,7 +62,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     }
 
     private func didAnswer(isYes: Bool) {
-        guard let currentQuestion = currentQuestion else {
+        guard let currentQuestion else {
             return
         }
         let givenAnswer = isYes
@@ -92,11 +97,15 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     }
 
     func makeResultsMessage() -> String {
+        let resultFirstString = "Ваш результат: \(correctAnswers)/\(questionsAmount)"
+        guard let statisticService else {
+            return resultFirstString
+        }
         statisticService.store(correct: correctAnswers, total: questionsAmount)
         let bestGame = statisticService.bestGame
         let accuracy = String(format: "%.2f", statisticService.totalAccuracy)
         let messageLines = [
-            "Ваш результат: \(correctAnswers)/\(questionsAmount)",
+            resultFirstString,
             "Количество сыгранных квизов: \(statisticService.gamesCount)",
             "Рекорд: \(bestGame.correct)/\(bestGame.total) (\(bestGame.date.dateTimeString))",
             "Средняя точность: \(accuracy)%"
